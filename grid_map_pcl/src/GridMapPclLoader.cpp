@@ -39,9 +39,7 @@ void GridMapPclLoader::mapCallback(const boost::shared_ptr<const sensor_msgs::Po
     pcl::fromPCLPointCloud2(pcl, *inputCloud);
     setInputCloud(inputCloud);
 
-    ROS_INFO("pre process start");
     preProcessInputCloud();
-    ROS_INFO("pre process finish");
     initializeGridMapGeometryFromInputCloud();
     addLayerFromInputCloud("elevation");
 

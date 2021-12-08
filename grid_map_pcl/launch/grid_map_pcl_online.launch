@@ -28,23 +28,8 @@
     <param name="set_verbosity_to_debug"  type="bool"   value="$(arg set_verbosity_to_debug)" />
   </node>
   
-  <node name="rviz_grid_map_pcl" pkg="rviz" type="rviz" args="-d $(find grid_map_pcl)/rviz/grid_map_vis.rviz" />
-  
-  <node name="point_cloud_publisher_node" 
-        pkg="grid_map_pcl"
-        type="pointcloud_publisher_node"
-        output="screen"
-        launch-prefix="$(arg prefix)"
-        if="$(arg publish_point_cloud)">
-    <param name="folder_path"             type="string" value="$(arg folder_path)" />
-    <param name="pcd_filename"            type="string" value="$(arg pcd_filename)" />
-    <param name="cloud_frame"             type="string" value="$(arg map_frame)" />
-  </node>
+  <include file="$(find grid_map_demos)/launch/filters_demo.launch"/>
+  <include file="$(find occupancy_invert)/launch/occupancy_invert.launch"/>
 
-  <!-- Launch the grid map visualizer -->
-  <node pkg="grid_map_visualization" type="grid_map_visualization" name="grid_map_visualization" output="screen">
-    <rosparam command="load" file="$(find grid_map_demos)/config/grid_map_loader_demo.yaml" />
-  </node>
-  
 </launch>
 

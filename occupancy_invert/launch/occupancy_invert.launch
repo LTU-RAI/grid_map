@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+    <node name="occupancy_invert" pkg="occupancy_invert" type="occupancy_invert_node" output="screen">
+        <param name="in_map_topic" type="string" value="/grid_map_visualization/traversability_grid" />
+        <param name="out_map_topic" type="string" value="spot/map" />
+    </node>
+</launch>

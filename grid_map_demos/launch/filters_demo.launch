@@ -6,7 +6,7 @@
     <!-- Input topic -->
   	<!--param name="input_topic" value="/image_to_gridmap_demo/grid_map" /-->
   	<!--param name="input_topic" value="/octomap_to_gridmap_demo/grid_map" /-->
-  	<param name="input_topic" value="/grid_map" />
+  	<param name="input_topic" value="/grid_map_pcl_loader_node/grid_map_from_raw_pointcloud" />
   	<!-- Output topic -->
   	<param name="output_topic" value="filtered_map" />
   	<!-- Load grid map filter chain configuration -->
