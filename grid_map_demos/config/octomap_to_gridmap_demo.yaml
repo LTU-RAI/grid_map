@@ -1,7 +1,7 @@
 octomap_to_gridmap_demo:
   octomap_service_topic: "/octomap_binary"
   min_z: -2.0
-  max_z: 2.0
+  max_z: 10.0
 
 grid_map_visualization:
   grid_map_topic: /octomap_to_gridmap_demo/grid_map
@@ -21,3 +21,9 @@ grid_map_visualization:
       params:
        color: 3289650
        line_width: 0.1
+    - name: traversability_grid
+      type: occupancy_grid
+      params:
+        layer: traversability
+        data_min: -10.0
+        data_max: 10.0

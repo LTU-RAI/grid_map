@@ -12,7 +12,6 @@
 #include <omp.h>
 #endif
 
-#include <pcl/common/io.h>
 #include <ros/console.h>
 
 #include <grid_map_core/GridMapMath.hpp>
@@ -22,9 +21,39 @@
 
 namespace grid_map {
 
+GridMapPclLoader::GridMapPclLoader(ros::NodeHandle nh) :
+    nh_(nh){
+
+    gridMapPub = nh_.advertise<grid_map_msgs::GridMap>("grid_map_from_raw_pointcloud", 1, true);
+}
+
 const grid_map::GridMap& GridMapPclLoader::getGridMap() const {
   return workingGridMap_;
 }
+
+void GridMapPclLoader::mapCallback(const boost::shared_ptr<const sensor_msgs::PointCloud2>& msg){
+    ROS_INFO("pcl receved");
+    Pointcloud::Ptr inputCloud(new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::PCLPointCloud2 pcl;
+    pcl_conversions::toPCL(*msg, pcl);
+    pcl::fromPCLPointCloud2(pcl, *inputCloud);
+    setInputCloud(inputCloud);
+
+    ROS_INFO("pre process start");
+    preProcessInputCloud();
+    ROS_INFO("pre process finish");
+    initializeGridMapGeometryFromInputCloud();
+    addLayerFromInputCloud("elevation");
+
+    grid_map::GridMap gridMap = getGridMap();
+    gridMap.setFrameId("world");
+
+  // publish grid map
+    grid_map_msgs::GridMap gm;
+    grid_map::GridMapRosConverter::toMessage(gridMap, gm);
+    gridMapPub.publish(gm);
+}
+
 
 void GridMapPclLoader::loadCloudFromPcdFile(const std::string& filename) {
   Pointcloud::Ptr inputCloud(new pcl::PointCloud<pcl::PointXYZ>);

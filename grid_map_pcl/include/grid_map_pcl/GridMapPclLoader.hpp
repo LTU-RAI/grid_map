@@ -16,6 +16,16 @@
 
 #include "grid_map_pcl/PclLoaderParameters.hpp"
 #include "grid_map_pcl/PointcloudProcessor.hpp"
+#include <sensor_msgs/PointCloud2.h>
+#include <grid_map_ros/GridMapRosConverter.hpp>
+
+#include <pcl/common/io.h>
+//#include <pcl/conversions.h>
+#include <pcl_conversions/pcl_conversions.h>
+#include <pcl/common/common.h>
+#include <pcl/common/transforms.h>
+#include <pcl/conversions.h>
+#include <pcl/io/pcd_io.h>
 
 namespace grid_map {
 
@@ -39,8 +49,13 @@ class GridMapPclLoader {
   using Point = ::pcl::PointXYZ;
   using Pointcloud = ::pcl::PointCloud<Point>;
 
-  GridMapPclLoader() = default;
+  GridMapPclLoader(ros::NodeHandle nh);
   ~GridMapPclLoader() = default;
+
+  /*
+  * point cloud map callback
+  */
+  void mapCallback(const boost::shared_ptr<const sensor_msgs::PointCloud2>& msg);
 
   /*!
    * Loads the point cloud into memory
@@ -202,6 +217,9 @@ class GridMapPclLoader {
 
   // Class that handles point cloud processing
   grid_map_pcl::PointcloudProcessor pointcloudProcessor_;
+
+  ros::Publisher gridMapPub;
+  ros::NodeHandle nh_;
 };
 
 }  // namespace grid_map

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <launch>
   <!-- Launch the grid map move demo node -->
   <node pkg="grid_map_demos" type="move_demo" name="grid_map_move_demo" output="screen" />

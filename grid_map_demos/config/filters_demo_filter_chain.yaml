@@ -1,10 +1,12 @@
 grid_map_filters:
-  - name: first
-    type: gridMapFilters/MockFilter
-    params:
-      processing_time: 100
-  - name: buffer_normalizer
-    type: gridMapFilters/BufferNormalizerFilter
+  #- name: first
+  #  type: gridMapFilters/MockFilter
+  #  params:
+  #    processing_time: 100
+  #    parallelization_enabled: true
+  #    thread_number: 8
+  #- name: buffer_normalizer
+  #  type: gridMapFilters/BufferNormalizerFilter
 
   # # Duplicate layer.
   # - name: duplicate
@@ -14,26 +16,33 @@ grid_map_filters:
   #     output_layer: ...
 
   # Delete color layer.
-  - name: delete_original_layers
-    type: gridMapFilters/DeletionFilter
-    params:
-      layers: [color] # List of layers.
+  #- name: delete_original_layers
+  #  type: gridMapFilters/DeletionFilter
+  #  params:
+  #    parallelization_enabled: true
+  #    thread_number: 8
+  #    layers: [color] # List of layers.
 
-  # Fill holes in the map with inpainting.
-  - name: inpaint
-    type: gridMapCv/InpaintFilter
-    params:
-      input_layer: elevation
-      output_layer: elevation_inpainted
-      radius: 0.05
 
   # Reduce noise with a radial blurring filter.
   - name: mean_in_radius
     type: gridMapFilters/MeanInRadiusFilter
     params:
-      input_layer: elevation_inpainted
+      parallelization_enabled: true
+      thread_number: 8
+      input_layer: elevation
       output_layer: elevation_smooth
-      radius: 0.06
+      radius: 0.25
+
+  # Fill holes in the map with inpainting.
+  - name: inpaint
+    type: gridMapCv/InpaintFilter
+    params:
+      parallelization_enabled: true
+      thread_number: 8
+      input_layer: elevation_smooth
+      output_layer: elevation_inpainted
+      radius: 0.35
 
   # Boxblur as an alternative to the inpaint and radial blurring filter above.
   # - name: boxblur
@@ -50,22 +59,26 @@ grid_map_filters:
   - name: surface_normals
     type: gridMapFilters/NormalVectorsFilter
     params:
-      input_layer: elevation_inpainted
+      parallelization_enabled: true
+      thread_number: 8
+      input_layer: elevation_smooth
       output_layers_prefix: normal_vectors_
-      radius: 0.05
+      radius: 1.00
       normal_vector_positive_axis: z
 
   # Add a color layer for visualization based on the surface normal.
-  - name: normal_color_map
-    type: gridMapFilters/NormalColorMapFilter
-    params:
-      input_layers_prefix: normal_vectors_
-      output_layer: normal_color
+  #- name: normal_color_map
+  #  type: gridMapFilters/NormalColorMapFilter
+  #  params:
+  #    input_layers_prefix: normal_vectors_
+  #    output_layer: normal_color
 
   # Compute slope from surface normal.
   - name: slope
     type: gridMapFilters/MathExpressionFilter
     params:
+      parallelization_enabled: true
+      thread_number: 8
       output_layer: slope
       expression: acos(normal_vectors_z)
 
@@ -73,19 +86,21 @@ grid_map_filters:
   - name: roughness
     type: gridMapFilters/MathExpressionFilter
     params:
+      parallelization_enabled: true
+      thread_number: 8
       output_layer: roughness
       expression: abs(elevation_inpainted - elevation_smooth)
 
   # Edge detection by computing the standard deviation from slope.
-  - name: edge_detection
-    type: gridMapFilters/SlidingWindowMathExpressionFilter
-    params:
-      input_layer: slope
-      output_layer: edges
-      expression: sqrt(sumOfFinites(square(slope - meanOfFinites(slope))) ./ numberOfFinites(slope)) # Standard deviation
-      compute_empty_cells: false
-      edge_handling: crop # options: inside, crop, empty, mean
-      window_length: 0.05
+  #- name: edge_detection
+  #  type: gridMapFilters/SlidingWindowMathExpressionFilter
+  #  params:
+  #    input_layer: slope
+  #    output_layer: edges
+  #    expression: sqrt(sumOfFinites(square(slope - meanOfFinites(slope))) ./ numberOfFinites(slope)) # Standard deviation
+  #    compute_empty_cells: false
+  #    edge_handling: crop # options: inside, crop, empty, mean
+  #    window_length: 0.5
 
   # # Edge detection on elevation layer with convolution filter as alternative to filter above.
   # - name: edge_detection
@@ -103,23 +118,29 @@ grid_map_filters:
   - name: traversability
     type: gridMapFilters/MathExpressionFilter
     params:
+      parallelization_enabled: true
+      thread_number: 8
       output_layer: traversability
-      expression: 0.5 * (1.0 - (slope / 0.6)) + 0.5 * (1.0 - (roughness / 0.1))
+      expression: 0.5 * (1.0 - (slope / 0.6)) + 0.5 * (1.0 - (roughness / 0.6))
 
   # Set lower threshold on traversability.
   - name: traversability_lower_threshold
     type: gridMapFilters/ThresholdFilter
     params:
+      parallelization_enabled: true
+      thread_number: 8
       condition_layer: traversability
       output_layer: traversability
-      lower_threshold: 0.0
+      lower_threshold: -1000.0
       set_to: 0.0
 
   # Set upper threshold on traversability.
   - name: traversability_upper_threshold
     type: gridMapFilters/ThresholdFilter
     params:
+      parallelization_enabled: true
+      thread_number: 8
       condition_layer: traversability
       output_layer: traversability
-      upper_threshold: 1.0
+      upper_threshold: 1000.0
       set_to: 1.0 # Other uses: .nan, .inf
