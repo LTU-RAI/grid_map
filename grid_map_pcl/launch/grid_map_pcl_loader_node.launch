@@ -2,7 +2,7 @@
 
 <launch>
   <arg name="folder_path"            default="$(find grid_map_pcl)/data"/>
-  <arg name="pcd_filename"           default="LOAM/cloudGlobal.pcd" />
+  <arg name="pcd_filename"           default="test.pcd" />
   <arg name="config_file_path"       default="$(find grid_map_pcl)/config/parameters.yaml" />
   <arg name="map_rosbag_topic"       default="grid_map" />
   <arg name="output_grid_map"        default="$(find grid_map_pcl)/data/input_cloud.bag" />

@@ -21,13 +21,13 @@ pcl_grid_map_extraction:
   downsampling:
     is_downsample_cloud: false
     voxel_size:
-      x: 0.2
-      y: 0.2
-      z: 0.2 
+      x: 0.5
+      y: 0.5
+      z: 0.5 
   grid_map:
     min_num_points_per_cell: 1
     max_num_points_per_cell: 100000
-    resolution: 0.1
+    resolution: 0.4
 
     
        

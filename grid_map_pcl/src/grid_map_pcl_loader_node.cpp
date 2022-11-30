@@ -31,7 +31,8 @@ int main(int argc, char** argv) {
   gridMapPclLoader.loadParameters(gm::getParameterPath(nh));
   //gridMapPclLoader.loadCloudFromPcdFile(pathToCloud);
   
-  ros::Subscriber sub = nh.subscribe("/lio_sam/mapping/map_global", 1, &grid_map::GridMapPclLoader::mapCallback, &gridMapPclLoader);
+  //ros::Subscriber sub = nh.subscribe("/incoming_map", 1, &grid_map::GridMapPclLoader::mapCallback, &gridMapPclLoader);
+  ros::Subscriber sub = nh.subscribe("/pioneer/dlo/map_node/map", 1, &grid_map::GridMapPclLoader::mapCallback, &gridMapPclLoader);
 
   //gm::processPointcloud(&gridMapPclLoader, nh);
 

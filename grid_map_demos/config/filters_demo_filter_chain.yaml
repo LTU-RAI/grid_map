@@ -32,7 +32,7 @@ grid_map_filters:
       thread_number: 8
       input_layer: elevation
       output_layer: elevation_smooth
-      radius: 0.25
+      radius: 0.45
 
   # Fill holes in the map with inpainting.
   - name: inpaint
@@ -42,7 +42,7 @@ grid_map_filters:
       thread_number: 8
       input_layer: elevation_smooth
       output_layer: elevation_inpainted
-      radius: 0.35
+      radius: 0.45
 
   # Boxblur as an alternative to the inpaint and radial blurring filter above.
   # - name: boxblur
@@ -121,7 +121,7 @@ grid_map_filters:
       parallelization_enabled: true
       thread_number: 8
       output_layer: traversability
-      expression: 0.5 * (1.0 - (slope / 0.6)) + 0.5 * (1.0 - (roughness / 0.6))
+      expression: 0.5 * (1.0 - (slope / 1.0)) + 0.5 * (1.0 - (roughness / 0.8))
 
   # Set lower threshold on traversability.
   - name: traversability_lower_threshold
